@@ -38,13 +38,16 @@ func newPostgresDB() *gorm.DB {
 		log.Fatal("failed to connect to PostgreSQL:", err)
 	}
 
-	if err := connDB.AutoMigrate(entities.User{}); err != nil {
+	if err := connDB.AutoMigrate(&entities.User{}); err != nil {
 		log.Fatal("failed to auto migrate user:", err)
 	}
 
 	sqlDB, err := connDB.DB()
 	if err != nil {
 		log.Fatalf("Gagal mendapatkan instance *sql.DB: %v", err)
+	}
+	if err := sqlDB.Ping(); err != nil {
+		log.Fatalf("failed to connect to PostgreSQL: %v", err)
 	}
 
 	sqlDB.SetMaxIdleConns(viper.GetInt("DB_MAX_IDLE_CONNECTIONS"))
