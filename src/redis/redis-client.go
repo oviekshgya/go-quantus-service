@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/go-redis/redis"
+	"github.com/spf13/viper"
 	"time"
 )
 
@@ -13,7 +14,7 @@ type RedisClient struct {
 
 func NewRedisClient() *RedisClient {
 	client := redis.NewClient(&redis.Options{
-		Addr:         "127.0.0.1:6379",
+		Addr:         viper.GetString("REDIS_ADDR"),
 		Password:     "",
 		DB:           0,
 		DialTimeout:  5 * time.Second,

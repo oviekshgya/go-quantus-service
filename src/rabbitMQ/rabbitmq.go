@@ -16,7 +16,7 @@ type RabbitMQImpl struct {
 
 func NewRabbitMQConnection() *RabbitMQImpl {
 	var err error
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", viper.GetString("RABBIT_USER"), viper.GetString("RABBIT_PASSWORD"), viper.GetString("RABBIT_HOST"), viper.GetString("RABBIT_PORT")))
 	if err != nil {
 		log.Fatal("Gagal menghubungkan ke RabbitMQ:", err)
 	}

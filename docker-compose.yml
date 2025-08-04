@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quantus-app
+    ports:
+      - "${SERVICE_PORT}:${SERVICE_PORT}"
+    depends_on:
+      - redis
+      - rabbitmq
+      - postgres
+    env_file:
+      - .env
+#    networks:
+#      - quantus-net
+    network_mode: host
+
+#  redis:
+#    image: redis:7-alpine
+#    container_name: quantus-redis
+#    ports:
+#      - "${REDIS_PORT}:${REDIS_PORT}"
+#    command: ["redis-server", "--requirepass", ""]
+#    env_file:
+#      - .env
+#    networks:
+#      - quantus-net
+#
+#  rabbitmq:
+#    image: rabbitmq:3-management
+#    container_name: quantus-rabbitmq
+#    ports:
+#      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
+#      - "15672:15672"
+#    environment:
+#      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+#      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+#    env_file:
+#      - .env
+#    networks:
+#      - quantus-net
+#
+#  postgres:
+#    image: postgres:15-alpine
+#    container_name: quantus-postgres
+#    ports:
+#      - "${DB_PORT}:${DB_PORT}"
+#    volumes:
+#      - pgdata:/var/lib/postgresql/data
+#    env_file:
+#      - .env
+#    networks:
+#      - quantus-net
+
+#volumes:
+#  pgdata:
+#
+#networks:
+#  quantus-net:
+#    driver: bridge
