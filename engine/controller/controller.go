@@ -19,3 +19,13 @@ func NewUserController(userService service.UserService) UserController {
 		UserService: userService,
 	}
 }
+
+type ContentController interface {
+	RegisterContentController(c *gin.Context)
+}
+
+func NewContentController(userService service.ContentSerivce) ContentController {
+	return &ContentControllerImpl{
+		services: userService,
+	}
+}

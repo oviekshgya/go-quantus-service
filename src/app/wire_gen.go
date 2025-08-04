@@ -21,7 +21,7 @@ import (
 
 // Injectors from injector.go:
 
-func InitializeStartupController() (controller.UserController, error) {
+func InitializeUserController() (controller.UserController, error) {
 	gormDB := db.GetDB()
 	repositoryUser := repository.NewUSerRepository()
 	rabbitMQImpl := rabbitMQ.NewRabbitMQConnection()
@@ -29,4 +29,14 @@ func InitializeStartupController() (controller.UserController, error) {
 	userService := service.NewUserService(gormDB, repositoryUser, rabbitMQImpl, redisClient)
 	userController := controller.NewUserController(userService)
 	return userController, nil
+}
+
+func InitializeContentController() (controller.ContentController, error) {
+	gormDB := db.GetDB()
+	repositoryContent := repository.NewContentRepository()
+	rabbitMQImpl := rabbitMQ.NewRabbitMQConnection()
+	redisClient := redis.NewRedisClient()
+	contentSerivce := service.NewContentService(gormDB, repositoryContent, rabbitMQImpl, redisClient)
+	contentController := controller.NewContentController(contentSerivce)
+	return contentController, nil
 }

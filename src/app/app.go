@@ -118,9 +118,11 @@ func Start() {
 }
 
 func routeDefine(router *gin.Engine) {
-	login, _ := InitializeStartupController()
+	login, _ := InitializeUserController()
+	content, _ := InitializeContentController()
 	var intialController = route.InitialController{
-		UserController: login,
+		UserController:    login,
+		ContentController: content,
 	}
 	intialController.RegisterGinRoutes(router)
 }

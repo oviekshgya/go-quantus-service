@@ -25,3 +25,16 @@ func NewUserService(db *gorm.DB, repo repository.RepositoryUser, rbt *rabbitMQ.R
 		Redis:  rds,
 	}
 }
+
+type ContentSerivce interface {
+	RegisterContent(c *gin.Context, req *entities.Content) (*entities.Content, error)
+}
+
+func NewContentService(db *gorm.DB, repo repository.RepositoryContent, rbt *rabbitMQ.RabbitMQImpl, rds *redis.RedisClient) ContentSerivce {
+	return &ContentServiceImpl{
+		DB:     db,
+		Repo:   repo,
+		Rabbit: rbt,
+		Redis:  rds,
+	}
+}

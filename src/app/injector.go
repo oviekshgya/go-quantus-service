@@ -10,13 +10,24 @@ import (
 	"go-quantus-service/src/repository"
 )
 
-func InitializeStartupControllers() (controller.UserController, error) {
+func InitializeUserControllers() (controller.UserController, error) {
 	wire.Build(
 		controller.NewUserController,
 		service.NewUserService,
 		redis.NewRedisClient,
 		rabbitMQ.NewRabbitMQConnection,
 		repository.NewUSerRepository,
+		db.GetDB)
+	return nil, nil
+}
+
+func InitializeContentControllers() (controller.ContentController, error) {
+	wire.Build(
+		controller.NewContentController,
+		service.NewContentService,
+		redis.NewRedisClient,
+		rabbitMQ.NewRabbitMQConnection,
+		repository.NewContentRepository,
 		db.GetDB)
 	return nil, nil
 }

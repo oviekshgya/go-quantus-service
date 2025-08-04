@@ -19,8 +19,14 @@ func LogInRouter(rg *gin.RouterGroup, c controller.UserController) {
 	rg.DELETE("/:user_id", jwtAuth, c.DeleteUserController)
 }
 
+func ContentRouter(rg *gin.RouterGroup, c controller.ContentController) {
+	jwtAuth := middleware.JWTAuthMiddleware()
+	rg.POST("/", jwtAuth, c.RegisterContentController)
+}
+
 type InitialController struct {
-	UserController controller.UserController
+	UserController    controller.UserController
+	ContentController controller.ContentController
 }
 
 func (ctrl *InitialController) RegisterGinRoutes(router *gin.Engine) {
@@ -31,4 +37,5 @@ func (ctrl *InitialController) RegisterGinRoutes(router *gin.Engine) {
 		})
 	})
 	LogInRouter(router.Group("/users"), ctrl.UserController)
+	ContentRouter(router.Group("/content"), ctrl.ContentController)
 }
