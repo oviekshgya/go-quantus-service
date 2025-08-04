@@ -5,8 +5,9 @@ WORKDIR /app
 
 COPY go.mod ./
 COPY go.sum ./
-#RUN go mod download
 RUN go mod tidy
+
+# Copy semua file, termasuk .env
 COPY . .
 
 RUN go build -o main ./main.go
@@ -17,6 +18,7 @@ FROM debian:bookworm
 WORKDIR /app
 
 COPY --from=builder /app/main .
+COPY --from=builder /app/.env .
 
 EXPOSE 7003
 
