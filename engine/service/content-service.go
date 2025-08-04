@@ -30,3 +30,31 @@ func (s *ContentServiceImpl) RegisterContent(c *gin.Context, req *entities.Conte
 	}
 	return result.(*entities.Content), nil
 }
+
+func (s *ContentServiceImpl) GetAllContents(c *gin.Context, id int64) ([]entities.Content, error) {
+	result, err := pkg.WithTransaction(s.DB, func(tx *gorm.DB) (interface{}, error) {
+		data, err := s.Repo.ListContentByUserID(tx, id)
+		if err != nil {
+			return nil, err
+		}
+		return data, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.([]entities.Content), nil
+}
+
+func (s *ContentServiceImpl) GetContentByID(c *gin.Context, id int64) (*entities.Content, error) {
+	result, err := pkg.WithTransaction(s.DB, func(tx *gorm.DB) (interface{}, error) {
+		data, err := s.Repo.GetContentByID(tx, id)
+		if err != nil {
+			return nil, err
+		}
+		return data, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*entities.Content), nil
+}

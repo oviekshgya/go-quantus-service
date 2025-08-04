@@ -22,6 +22,8 @@ func LogInRouter(rg *gin.RouterGroup, c controller.UserController) {
 func ContentRouter(rg *gin.RouterGroup, c controller.ContentController) {
 	jwtAuth := middleware.JWTAuthMiddleware()
 	rg.POST("/", jwtAuth, c.RegisterContentController)
+	rg.GET("/", jwtAuth, c.GetAllContentsController)
+	rg.GET("/:content_id", jwtAuth, c.GetContentByIDController)
 }
 
 type InitialController struct {

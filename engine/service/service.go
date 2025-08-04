@@ -28,6 +28,8 @@ func NewUserService(db *gorm.DB, repo repository.RepositoryUser, rbt *rabbitMQ.R
 
 type ContentSerivce interface {
 	RegisterContent(c *gin.Context, req *entities.Content) (*entities.Content, error)
+	GetAllContents(c *gin.Context, id int64) ([]entities.Content, error)
+	GetContentByID(c *gin.Context, id int64) (*entities.Content, error)
 }
 
 func NewContentService(db *gorm.DB, repo repository.RepositoryContent, rbt *rabbitMQ.RabbitMQImpl, rds *redis.RedisClient) ContentSerivce {

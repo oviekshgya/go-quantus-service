@@ -22,6 +22,8 @@ func NewUserController(userService service.UserService) UserController {
 
 type ContentController interface {
 	RegisterContentController(c *gin.Context)
+	GetAllContentsController(c *gin.Context)
+	GetContentByIDController(c *gin.Context)
 }
 
 func NewContentController(userService service.ContentSerivce) ContentController {
