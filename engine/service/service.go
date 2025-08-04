@@ -32,6 +32,7 @@ type ContentSerivce interface {
 	GetContentByID(c *gin.Context, id int64) (*entities.Content, error)
 	UpdateContent(c *gin.Context, req *entities.Content) (*entities.Content, error)
 	DeleteContent(c *gin.Context, id int64) (*int64, error)
+	HandleContentUpdateOrDelete(c *gin.Context, content *entities.Content) (interface{}, error)
 }
 
 func NewContentService(db *gorm.DB, repo repository.RepositoryContent, rbt *rabbitMQ.RabbitMQImpl, rds *redis.RedisClient) ContentSerivce {

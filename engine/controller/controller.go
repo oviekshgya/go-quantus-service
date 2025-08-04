@@ -26,6 +26,7 @@ type ContentController interface {
 	GetContentByIDController(c *gin.Context)
 	UpdateContentController(c *gin.Context)
 	DeleteContentController(c *gin.Context)
+	UpdateOrDeleteContentController(ctx *gin.Context)
 }
 
 func NewContentController(userService service.ContentSerivce) ContentController {
