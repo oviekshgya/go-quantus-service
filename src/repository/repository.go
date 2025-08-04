@@ -10,6 +10,7 @@ type RepositoryUser interface {
 	UpdateUser(tx *gorm.DB, user *entities.User) error
 	DeleteUser(tx *gorm.DB, idUser int64) error
 	GetUserByEmail(tx *gorm.DB, email string) (*entities.User, error)
+	GetUserByID(tx *gorm.DB, id int64) (*entities.User, error)
 	ListUser(tx *gorm.DB) ([]entities.User, error)
 }
 

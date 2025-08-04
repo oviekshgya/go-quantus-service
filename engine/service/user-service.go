@@ -34,7 +34,7 @@ func (s *UserServiceImpl) RegisterUser(c *gin.Context, req *entities.User) (*ent
 	return result.(*entities.User), nil
 }
 
-func (s *UserServiceImpl) LoginUserController(c *gin.Context, req *entities.User) (*entities.User, error) {
+func (s *UserServiceImpl) LoginUser(c *gin.Context, req *entities.User) (*entities.User, error) {
 	result, err := pkg.WithTransaction(s.DB, func(tx *gorm.DB) (interface{}, error) {
 		getUser, err := s.Repo.GetUserByEmail(tx, req.Email)
 		if err != nil {
@@ -53,4 +53,52 @@ func (s *UserServiceImpl) LoginUserController(c *gin.Context, req *entities.User
 		return nil, err
 	}
 	return result.(*entities.User), nil
+}
+
+func (s *UserServiceImpl) UserDetail(c *gin.Context, id int64) (*entities.User, error) {
+	result, err := pkg.WithTransaction(s.DB, func(tx *gorm.DB) (interface{}, error) {
+		getUser, err := s.Repo.GetUserByID(tx, id)
+		if err != nil {
+			config.Logger.Println("[err service] not found user", err.Error())
+			return nil, fmt.Errorf("not found user")
+		}
+		return getUser, nil
+	})
+	if err != nil {
+		config.Logger.Println("[err service] not found user", err.Error())
+		return nil, fmt.Errorf("invalid user")
+	}
+	return result.(*entities.User), nil
+}
+
+func (s *UserServiceImpl) UpdateUSser(c *gin.Context, req *entities.User) (*entities.User, error) {
+	result, err := pkg.WithTransaction(s.DB, func(tx *gorm.DB) (interface{}, error) {
+		err := s.Repo.UpdateUser(tx, req)
+		if err != nil {
+			config.Logger.Println("[err service] update user", err.Error())
+			return nil, err
+		}
+		return req, nil
+	})
+	if err != nil {
+		config.Logger.Println("[err service] update user", err.Error())
+		return nil, err
+	}
+	return result.(*entities.User), nil
+}
+
+func (s *UserServiceImpl) DeleteUser(c *gin.Context, id int64) (*int64, error) {
+	result, err := pkg.WithTransaction(s.DB, func(tx *gorm.DB) (interface{}, error) {
+		err := s.Repo.DeleteUser(tx, id)
+		if err != nil {
+			config.Logger.Println("[err service] delete user", err.Error())
+			return nil, err
+		}
+		return &id, nil
+	})
+	if err != nil {
+		config.Logger.Println("[err service] delete user", err.Error())
+		return nil, err
+	}
+	return result.(*int64), nil
 }

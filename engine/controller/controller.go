@@ -8,6 +8,10 @@ import (
 type UserController interface {
 	RegisterUserController(c *gin.Context)
 	LoginUserController(c *gin.Context)
+	UserDetailController(c *gin.Context)
+	UserDetailByIDController(c *gin.Context)
+	UpdateUserController(c *gin.Context)
+	DeleteUserController(c *gin.Context)
 }
 
 func NewUserController(userService service.UserService) UserController {

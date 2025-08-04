@@ -11,7 +11,10 @@ import (
 
 type UserService interface {
 	RegisterUser(c *gin.Context, req *entities.User) (*entities.User, error)
-	LoginUserController(c *gin.Context, req *entities.User) (*entities.User, error)
+	LoginUser(c *gin.Context, req *entities.User) (*entities.User, error)
+	UserDetail(c *gin.Context, id int64) (*entities.User, error)
+	UpdateUSser(c *gin.Context, req *entities.User) (*entities.User, error)
+	DeleteUser(c *gin.Context, id int64) (*int64, error)
 }
 
 func NewUserService(db *gorm.DB, repo repository.RepositoryUser, rbt *rabbitMQ.RabbitMQImpl, rds *redis.RedisClient) UserService {

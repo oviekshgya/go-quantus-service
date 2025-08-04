@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/spf13/viper"
+	"strconv"
 	"time"
 )
 
@@ -48,9 +49,15 @@ func getUserRole(c *gin.Context) string {
 	return ""
 }
 
-func ExtractToken(c *gin.Context) *CustomClaims {
-	return &CustomClaims{
-		UserID: getUserID(c),
+type TokenData struct {
+	UserID int64  `json:"user_id"`
+	Role   string `json:"role"`
+}
+
+func ExtractToken(c *gin.Context) *TokenData {
+	id, _ := strconv.Atoi(getUserID(c))
+	return &TokenData{
+		UserID: int64(id),
 		Role:   getUserRole(c),
 	}
 }

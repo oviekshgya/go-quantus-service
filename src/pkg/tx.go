@@ -3,6 +3,9 @@ package pkg
 import (
 	"fmt"
 	"gorm.io/gorm"
+	"reflect"
+	"strings"
+	"time"
 )
 
 func WithTransaction(db *gorm.DB, fn func(tz *gorm.DB) (interface{}, error)) (interface{}, error) {
@@ -67,4 +70,53 @@ func WithTransactionV2(db *gorm.DB, fn func(tz *gorm.DB) *TxResult) (interface{}
 	}
 
 	return res.Data, res.Err
+}
+
+func UpdateFieldsDynamic(input interface{}) map[string]interface{} {
+	v := reflect.ValueOf(input)
+	ind := reflect.Indirect(v)
+	updateData := make(map[string]interface{})
+
+	for i := 0; i < ind.NumField(); i++ {
+		value := ind.Field(i)
+		fieldType := ind.Type().Field(i)
+
+		// Ambil tag GORM
+		gormTag := fieldType.Tag.Get("gorm")
+		if strings.Contains(gormTag, "primaryKey") {
+			continue
+		}
+
+		columnName := ""
+		tags := strings.Split(gormTag, ";")
+		for _, tag := range tags {
+			if strings.HasPrefix(tag, "column:") {
+				columnName = strings.TrimPrefix(tag, "column:")
+				break
+			}
+		}
+
+		if columnName == "" {
+			continue
+		}
+
+		if !value.IsZero() {
+			switch v := value.Interface().(type) {
+			case *int:
+				updateData[columnName] = *v
+			case *string:
+				updateData[columnName] = *v
+			case *float32:
+				updateData[columnName] = *v
+			case *float64:
+				updateData[columnName] = *v
+			case *time.Time:
+				updateData[columnName] = *v
+			default:
+				updateData[columnName] = v
+			}
+		}
+	}
+
+	return updateData
 }
