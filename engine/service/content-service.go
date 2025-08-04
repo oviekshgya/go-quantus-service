@@ -58,3 +58,31 @@ func (s *ContentServiceImpl) GetContentByID(c *gin.Context, id int64) (*entities
 	}
 	return result.(*entities.Content), nil
 }
+
+func (s *ContentServiceImpl) UpdateContent(c *gin.Context, req *entities.Content) (*entities.Content, error) {
+	result, err := pkg.WithTransaction(s.DB, func(tx *gorm.DB) (interface{}, error) {
+		err := s.Repo.UpdateContent(tx, req)
+		if err != nil {
+			return nil, err
+		}
+		return req, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*entities.Content), nil
+}
+
+func (s *ContentServiceImpl) DeleteContent(c *gin.Context, id int64) (*int64, error) {
+	result, err := pkg.WithTransaction(s.DB, func(tx *gorm.DB) (interface{}, error) {
+		err := s.Repo.DeleteContent(tx, id)
+		if err != nil {
+			return nil, err
+		}
+		return &id, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return result.(*int64), nil
+}

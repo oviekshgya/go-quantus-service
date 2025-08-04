@@ -24,6 +24,8 @@ func ContentRouter(rg *gin.RouterGroup, c controller.ContentController) {
 	rg.POST("/", jwtAuth, c.RegisterContentController)
 	rg.GET("/", jwtAuth, c.GetAllContentsController)
 	rg.GET("/:content_id", jwtAuth, c.GetContentByIDController)
+	rg.PUT("/:content_id", jwtAuth, c.UpdateContentController)
+	rg.DELETE("/:content_id", jwtAuth, c.DeleteContentController)
 }
 
 type InitialController struct {
