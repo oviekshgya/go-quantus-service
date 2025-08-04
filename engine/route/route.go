@@ -11,6 +11,7 @@ import (
 func LogInRouter(rg *gin.RouterGroup, c controller.UserController) {
 	basicAuth := middleware.BasicAuthMiddleware(viper.GetString("SERVICE_USERNAME"), viper.GetString("SERVICE_PASSWORD"))
 	rg.POST("/", basicAuth, c.RegisterUserController)
+	rg.POST("/login", basicAuth, c.LoginUserController)
 }
 
 type InitialController struct {

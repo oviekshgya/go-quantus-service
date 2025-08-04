@@ -7,6 +7,7 @@ import (
 
 type UserController interface {
 	RegisterUserController(c *gin.Context)
+	LoginUserController(c *gin.Context)
 }
 
 func NewUserController(userService service.UserService) UserController {

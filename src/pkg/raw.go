@@ -12,3 +12,8 @@ type RawUser struct {
 	CreatedAt time.Time `gorm:"column:created_at" json:"createdAt"`
 	UpdatedAt time.Time `gorm:"column:updated_at" json:"updatedAt"`
 }
+
+type RawLogin struct {
+	Email    string `gorm:"column:email" json:"email"`
+	Password string `gorm:"column:password" json:"password"`
+}
