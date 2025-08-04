@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/spf13/viper"
+	"go-quantus-service/src/entities"
 	"time"
 )
 
@@ -87,4 +88,32 @@ func (client *RedisClient) FlushAll() error {
 
 func (client *RedisClient) Close() error {
 	return client.C.Close()
+}
+
+func (client *RedisClient) PushLogToQueue(queueName string, logData interface{}) error {
+	data, err := json.Marshal(logData)
+	if err != nil {
+		return err
+	}
+	return client.C.LPush(queueName, data).Err()
+}
+
+// PopLogsFromQueue pops multiple logs from Redis list (queue), up to batchSize
+func (client *RedisClient) PopLogsFromQueue(queueName string, batchSize int) ([]entities.LogEntry, error) {
+	var logs []entities.LogEntry
+
+	for i := 0; i < batchSize; i++ {
+		data, err := client.C.RPop(queueName).Result()
+		if err == redis.Nil {
+			break // queue empty
+		}
+		if err != nil {
+			return logs, err
+		}
+		var log entities.LogEntry
+		if err := json.Unmarshal([]byte(data), &log); err == nil {
+			logs = append(logs, log)
+		}
+	}
+	return logs, nil
 }

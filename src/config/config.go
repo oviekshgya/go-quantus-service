@@ -5,8 +5,11 @@ import (
 	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"go-quantus-service/src/redis"
+	"gorm.io/gorm"
 	"log"
 	"os"
+	"time"
 )
 
 var NRc *newrelic.Application
@@ -41,4 +44,25 @@ func init() {
 		newrelic.ConfigLicense(viper.GetString("NEW_RELIC_LICENSE")),
 		newrelic.ConfigDistributedTracerEnabled(true),
 	)
+
+}
+
+func StartLogWorker(db *gorm.DB, redisClient *redis.RedisClient, batchSize int, interval time.Duration) {
+	ticker := time.NewTicker(interval)
+
+	go func() {
+		for range ticker.C {
+			logs, err := redisClient.PopLogsFromQueue("log_queue", batchSize)
+			if err != nil {
+				fmt.Println("Redis RPop error:", err)
+				continue
+			}
+
+			if len(logs) > 0 {
+				if err := db.Create(&logs).Error; err != nil {
+					fmt.Println("DB insert error:", err)
+				}
+			}
+		}
+	}()
 }

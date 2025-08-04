@@ -38,7 +38,7 @@ func newPostgresDB() *gorm.DB {
 		log.Fatal("failed to connect to PostgreSQL:", err)
 	}
 
-	if err := connDB.AutoMigrate(&entities.User{}, &entities.Content{}); err != nil {
+	if err := connDB.AutoMigrate(&entities.User{}, &entities.Content{}, &entities.LogEntry{}); err != nil {
 		log.Fatal("failed to auto migrate user:", err)
 	}
 
