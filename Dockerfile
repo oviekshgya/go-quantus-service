@@ -12,7 +12,7 @@ COPY . .
 RUN go build -o main ./main.go
 
 # Run Stage
-FROM debian:bullseye-slim
+FROM debian:bookworm
 
 WORKDIR /app
 
