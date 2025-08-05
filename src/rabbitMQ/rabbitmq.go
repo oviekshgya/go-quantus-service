@@ -8,6 +8,11 @@ import (
 	"strconv"
 )
 
+type RabbitMQConfig interface {
+	Publish(exchange, routeKey string, data []byte, retryCount int) error
+	Consume(queueName string, handler func(body []byte) error)
+}
+
 type RabbitMQImpl struct {
 	RabbitConn    *amqp.Connection
 	RabbitChannel *amqp.Channel

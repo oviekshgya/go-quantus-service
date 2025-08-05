@@ -13,6 +13,18 @@ type RedisClient struct {
 	C *redis.Client
 }
 
+type RedisConfig interface {
+	GetKey(key string, src interface{}) error
+	SetKey(key string, value interface{}, expiration time.Duration) error
+	DeleteKey(key string) error
+	SettexKey(key string, value interface{}, expiration time.Duration) error
+	ExpireKey(key string, expiration time.Duration) error
+	FlushAll() error
+	Close() error
+	PushLogToQueue(queueName string, logData interface{}) error
+	PopLogsFromQueue(queueName string, batchSize int) ([]entities.LogEntry, error)
+}
+
 func NewRedisClient() *RedisClient {
 	client := redis.NewClient(&redis.Options{
 		Addr:         viper.GetString("REDIS_ADDR"),

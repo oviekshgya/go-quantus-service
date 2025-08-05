@@ -8,3 +8,59 @@
 
 // Package mocks is a generated GoMock package.
 package mocks
+
+import (
+	reflect "reflect"
+
+	gomock "go.uber.org/mock/gomock"
+)
+
+// MockRabbitMQConfig is a mock of RabbitMQConfig interface.
+type MockRabbitMQConfig struct {
+	ctrl     *gomock.Controller
+	recorder *MockRabbitMQConfigMockRecorder
+	isgomock struct{}
+}
+
+// MockRabbitMQConfigMockRecorder is the mock recorder for MockRabbitMQConfig.
+type MockRabbitMQConfigMockRecorder struct {
+	mock *MockRabbitMQConfig
+}
+
+// NewMockRabbitMQConfig creates a new mock instance.
+func NewMockRabbitMQConfig(ctrl *gomock.Controller) *MockRabbitMQConfig {
+	mock := &MockRabbitMQConfig{ctrl: ctrl}
+	mock.recorder = &MockRabbitMQConfigMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockRabbitMQConfig) EXPECT() *MockRabbitMQConfigMockRecorder {
+	return m.recorder
+}
+
+// Consume mocks base method.
+func (m *MockRabbitMQConfig) Consume(queueName string, handler func([]byte) error) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Consume", queueName, handler)
+}
+
+// Consume indicates an expected call of Consume.
+func (mr *MockRabbitMQConfigMockRecorder) Consume(queueName, handler any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Consume", reflect.TypeOf((*MockRabbitMQConfig)(nil).Consume), queueName, handler)
+}
+
+// Publish mocks base method.
+func (m *MockRabbitMQConfig) Publish(exchange, routeKey string, data []byte, retryCount int) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Publish", exchange, routeKey, data, retryCount)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Publish indicates an expected call of Publish.
+func (mr *MockRabbitMQConfigMockRecorder) Publish(exchange, routeKey, data, retryCount any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Publish", reflect.TypeOf((*MockRabbitMQConfig)(nil).Publish), exchange, routeKey, data, retryCount)
+}

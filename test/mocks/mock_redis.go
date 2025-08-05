@@ -8,3 +8,162 @@
 
 // Package mocks is a generated GoMock package.
 package mocks
+
+import (
+	entities "go-quantus-service/src/entities"
+	reflect "reflect"
+	time "time"
+
+	gomock "go.uber.org/mock/gomock"
+)
+
+// MockRedisConfig is a mock of RedisConfig interface.
+type MockRedisConfig struct {
+	ctrl     *gomock.Controller
+	recorder *MockRedisConfigMockRecorder
+	isgomock struct{}
+}
+
+// MockRedisConfigMockRecorder is the mock recorder for MockRedisConfig.
+type MockRedisConfigMockRecorder struct {
+	mock *MockRedisConfig
+}
+
+// NewMockRedisConfig creates a new mock instance.
+func NewMockRedisConfig(ctrl *gomock.Controller) *MockRedisConfig {
+	mock := &MockRedisConfig{ctrl: ctrl}
+	mock.recorder = &MockRedisConfigMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockRedisConfig) EXPECT() *MockRedisConfigMockRecorder {
+	return m.recorder
+}
+
+// Close mocks base method.
+func (m *MockRedisConfig) Close() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Close")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Close indicates an expected call of Close.
+func (mr *MockRedisConfigMockRecorder) Close() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockRedisConfig)(nil).Close))
+}
+
+// DeleteKey mocks base method.
+func (m *MockRedisConfig) DeleteKey(key string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteKey", key)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteKey indicates an expected call of DeleteKey.
+func (mr *MockRedisConfigMockRecorder) DeleteKey(key any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteKey", reflect.TypeOf((*MockRedisConfig)(nil).DeleteKey), key)
+}
+
+// ExpireKey mocks base method.
+func (m *MockRedisConfig) ExpireKey(key string, expiration time.Duration) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExpireKey", key, expiration)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ExpireKey indicates an expected call of ExpireKey.
+func (mr *MockRedisConfigMockRecorder) ExpireKey(key, expiration any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExpireKey", reflect.TypeOf((*MockRedisConfig)(nil).ExpireKey), key, expiration)
+}
+
+// FlushAll mocks base method.
+func (m *MockRedisConfig) FlushAll() error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FlushAll")
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// FlushAll indicates an expected call of FlushAll.
+func (mr *MockRedisConfigMockRecorder) FlushAll() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FlushAll", reflect.TypeOf((*MockRedisConfig)(nil).FlushAll))
+}
+
+// GetKey mocks base method.
+func (m *MockRedisConfig) GetKey(key string, src any) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetKey", key, src)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// GetKey indicates an expected call of GetKey.
+func (mr *MockRedisConfigMockRecorder) GetKey(key, src any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetKey", reflect.TypeOf((*MockRedisConfig)(nil).GetKey), key, src)
+}
+
+// PopLogsFromQueue mocks base method.
+func (m *MockRedisConfig) PopLogsFromQueue(queueName string, batchSize int) ([]entities.LogEntry, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PopLogsFromQueue", queueName, batchSize)
+	ret0, _ := ret[0].([]entities.LogEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// PopLogsFromQueue indicates an expected call of PopLogsFromQueue.
+func (mr *MockRedisConfigMockRecorder) PopLogsFromQueue(queueName, batchSize any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PopLogsFromQueue", reflect.TypeOf((*MockRedisConfig)(nil).PopLogsFromQueue), queueName, batchSize)
+}
+
+// PushLogToQueue mocks base method.
+func (m *MockRedisConfig) PushLogToQueue(queueName string, logData any) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PushLogToQueue", queueName, logData)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// PushLogToQueue indicates an expected call of PushLogToQueue.
+func (mr *MockRedisConfigMockRecorder) PushLogToQueue(queueName, logData any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PushLogToQueue", reflect.TypeOf((*MockRedisConfig)(nil).PushLogToQueue), queueName, logData)
+}
+
+// SetKey mocks base method.
+func (m *MockRedisConfig) SetKey(key string, value any, expiration time.Duration) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetKey", key, value, expiration)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SetKey indicates an expected call of SetKey.
+func (mr *MockRedisConfigMockRecorder) SetKey(key, value, expiration any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetKey", reflect.TypeOf((*MockRedisConfig)(nil).SetKey), key, value, expiration)
+}
+
+// SettexKey mocks base method.
+func (m *MockRedisConfig) SettexKey(key string, value any, expiration time.Duration) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SettexKey", key, value, expiration)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// SettexKey indicates an expected call of SettexKey.
+func (mr *MockRedisConfigMockRecorder) SettexKey(key, value, expiration any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SettexKey", reflect.TypeOf((*MockRedisConfig)(nil).SettexKey), key, value, expiration)
+}

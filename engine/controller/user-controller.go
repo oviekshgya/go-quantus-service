@@ -34,7 +34,7 @@ func (c *UserControllerImpl) RegisterUserController(ctx *gin.Context) {
 		_ = resp.SetHttpCode(http.StatusBadRequest).ReplyFailed("99", "909", err.Error(), nil)
 		return
 	}
-	_ = resp.SetHttpCode(http.StatusCreated).ReplySuccess("00", "00001", "created", result)
+	_ = resp.SetHttpCode(http.StatusCreated).Reply(http.StatusCreated, "00", "00001", "created", result)
 	return
 }
 

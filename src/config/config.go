@@ -25,7 +25,7 @@ func init() {
 
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Fatalf("Error saat membaca file .envUser: %v", err)
+		log.Fatalf("Error saat membaca file .env: %v", err)
 	}
 
 	name := viper.GetString("LOG_NAME")
