@@ -30,9 +30,22 @@ func newPostgresDB() *gorm.DB {
 	)
 
 	var err error
-	connDB, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{
-		PrepareStmt: true,
-	})
+	//connDB, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{
+	//	PrepareStmt: true,
+	//})
+
+	var connDB *gorm.DB
+	for i := 0; i < 10; i++ {
+		connDB, err = gorm.Open(postgres.Open(connectionString), &gorm.Config{PrepareStmt: true})
+		if err == nil {
+			break
+		}
+		log.Println("Waiting for PostgreSQL to be ready...")
+		time.Sleep(3 * time.Second)
+	}
+	if err != nil {
+		log.Fatalf("failed to connect to PostgreSQL after retries: %v", err)
+	}
 
 	if err != nil {
 		log.Fatal("failed to connect to PostgreSQL:", err)

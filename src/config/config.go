@@ -48,19 +48,17 @@ func init() {
 	)
 
 }
+
 func StartLogWorker(db *gorm.DB, redisClient *redis.RedisClient, batchSize int, interval time.Duration) {
 	ticker := time.NewTicker(interval)
 
 	go func() {
 		for range ticker.C {
-			// Cek panjang queue
 			queueLen, err := redisClient.C.LLen("log_queue").Result()
 			if err != nil {
 				fmt.Println("Redis LLEN error:", err)
 				continue
 			}
-
-			// Lanjut hanya jika jumlah log >= batchSize
 			if queueLen >= int64(batchSize) {
 				logStrings, err := redisClient.C.LRange("log_queue", 0, int64(batchSize-1)).Result()
 				if err != nil {
@@ -76,14 +74,12 @@ func StartLogWorker(db *gorm.DB, redisClient *redis.RedisClient, batchSize int, 
 					}
 				}
 
-				// Insert ke DB
 				if len(logs) > 0 {
 					if err := db.Create(&logs).Error; err != nil {
 						fmt.Println("DB insert error:", err)
-						continue // jangan hapus dari Redis kalau gagal insert
+						continue
 					}
 
-					// Hapus batch yang sudah diproses dari Redis
 					if err := redisClient.C.LTrim("log_queue", int64(batchSize), -1).Err(); err != nil {
 						fmt.Println("Redis LTRIM error:", err)
 					}

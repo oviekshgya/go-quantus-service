@@ -1,6 +1,57 @@
 #version: '3.8'
 
 services:
+  redis:
+    image: redis:7-alpine
+    container_name: quantus-redis
+    ports:
+      - "${REDIS_PORT}:${REDIS_PORT}"
+    command: ["redis-server", "--requirepass", ""]
+    env_file:
+      - .env
+    networks:
+      - quantus-net
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: quantus-rabbitmq
+    ports:
+      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    env_file:
+      - .env
+    networks:
+      - quantus-net
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: quantus-postgres
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - quantus-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_NAME}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   app:
     build:
       context: .
@@ -8,56 +59,19 @@ services:
     container_name: quantus-app
     ports:
       - "${SERVICE_PORT}:${SERVICE_PORT}"
-#    depends_on:
-#      - redis
-#      - rabbitmq
-#      - postgres
+    depends_on:
+      - redis
+      - rabbitmq
+      - postgres
     env_file:
       - .env
-#    networks:
-#      - quantus-net
-    network_mode: host
+    networks:
+      - quantus-net
+    restart: always
 
-#  redis:
-#    image: redis:7-alpine
-#    container_name: quantus-redis
-#    ports:
-#      - "${REDIS_PORT}:${REDIS_PORT}"
-#    command: ["redis-server", "--requirepass", ""]
-#    env_file:
-#      - .env
-#    networks:
-#      - quantus-net
-#
-#  rabbitmq:
-#    image: rabbitmq:3-management
-#    container_name: quantus-rabbitmq
-#    ports:
-#      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
-#      - "15672:15672"
-#    environment:
-#      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-#      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
-#    env_file:
-#      - .env
-#    networks:
-#      - quantus-net
-#
-#  postgres:
-#    image: postgres:15-alpine
-#    container_name: quantus-postgres
-#    ports:
-#      - "${DB_PORT}:${DB_PORT}"
-#    volumes:
-#      - pgdata:/var/lib/postgresql/data
-#    env_file:
-#      - .env
-#    networks:
-#      - quantus-net
+volumes:
+  pgdata:
 
-#volumes:
-#  pgdata:
-#
-#networks:
-#  quantus-net:
-#    driver: bridge
+networks:
+  quantus-net:
+    driver: bridge
