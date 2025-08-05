@@ -4,27 +4,26 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"go-quantus-service/engine/controller"
 	"go-quantus-service/src/entities"
-	rds "go-quantus-service/src/redis"
 	"io/ioutil"
 	"strconv"
 	"time"
 )
 
-func RequestLogger(redisClient *rds.RedisClient) gin.HandlerFunc {
+func RequestLogger(logController controller.LogControllerinterface) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()
 
-		// Read body (and replace so it can be read again)
+		// Read body
 		bodyBytes, _ := ioutil.ReadAll(c.Request.Body)
 		c.Request.Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
 
-		// Continue processing
+		// Proses request
 		c.Next()
 
-		// Capture response body if needed (optional: or use middleware like gin's ResponseRecorder)
+		// After request
 		status := c.Writer.Status()
-
 		headers, _ := json.Marshal(c.Request.Header)
 
 		log := entities.LogEntry{
@@ -33,12 +32,12 @@ func RequestLogger(redisClient *rds.RedisClient) gin.HandlerFunc {
 			Path:      c.Request.URL.Path,
 			Headers:   string(headers),
 			Body:      string(bodyBytes),
-			Response:  strconv.Itoa(c.Writer.Status()),
+			Response:  strconv.Itoa(status),
 			Status:    status,
 			CreatedAt: start,
 		}
 
-		_ = redisClient.PushLogToQueue("log_queue", log)
-
+		// Ambil Redis dari controller
+		_ = logController.GetDependencies().Redis.PushLogToQueue("log_queue", log)
 	}
 }

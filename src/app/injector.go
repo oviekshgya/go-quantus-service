@@ -31,3 +31,12 @@ func InitializeContentControllers() (controller.ContentController, error) {
 		db.GetDB)
 	return nil, nil
 }
+
+func InitializeLogControllers() (controller.LogControllerinterface, error) {
+	wire.Build(
+		controller.NewLogController,
+		redis.NewRedisClient,
+		rabbitMQ.NewRabbitMQConnection,
+		db.GetDB)
+	return nil, nil
+}

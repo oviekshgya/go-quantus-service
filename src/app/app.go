@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"go-quantus-service/engine/route"
+	"go-quantus-service/src/config"
 	_ "go-quantus-service/src/config"
 	"go-quantus-service/src/pkg"
 	"log"
@@ -120,9 +121,14 @@ func Start() {
 func routeDefine(router *gin.Engine) {
 	login, _ := InitializeUserController()
 	content, _ := InitializeContentController()
+	logCon, _ := InitializeLogController()
+
+	go config.StartLogWorker(logCon.GetDependencies().DB, logCon.GetDependencies().Redis, 5, 2)
+
 	var intialController = route.InitialController{
 		UserController:    login,
 		ContentController: content,
+		LogController:     logCon,
 	}
 	intialController.RegisterGinRoutes(router)
 }

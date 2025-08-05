@@ -33,10 +33,12 @@ func ContentRouter(rg *gin.RouterGroup, c controller.ContentController) {
 type InitialController struct {
 	UserController    controller.UserController
 	ContentController controller.ContentController
+	LogController     controller.LogControllerinterface
 }
 
 func (ctrl *InitialController) RegisterGinRoutes(router *gin.Engine) {
 
+	router.Use(middleware.RequestLogger(ctrl.LogController))
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",

@@ -1,10 +1,12 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"go-quantus-service/src/entities"
 	"go-quantus-service/src/redis"
 	"gorm.io/gorm"
 	"log"
@@ -46,21 +48,46 @@ func init() {
 	)
 
 }
-
 func StartLogWorker(db *gorm.DB, redisClient *redis.RedisClient, batchSize int, interval time.Duration) {
 	ticker := time.NewTicker(interval)
 
 	go func() {
 		for range ticker.C {
-			logs, err := redisClient.PopLogsFromQueue("log_queue", batchSize)
+			// Cek panjang queue
+			queueLen, err := redisClient.C.LLen("log_queue").Result()
 			if err != nil {
-				fmt.Println("Redis RPop error:", err)
+				fmt.Println("Redis LLEN error:", err)
 				continue
 			}
 
-			if len(logs) > 0 {
-				if err := db.Create(&logs).Error; err != nil {
-					fmt.Println("DB insert error:", err)
+			// Lanjut hanya jika jumlah log >= batchSize
+			if queueLen >= int64(batchSize) {
+				logStrings, err := redisClient.C.LRange("log_queue", 0, int64(batchSize-1)).Result()
+				if err != nil {
+					fmt.Println("Redis LRANGE error:", err)
+					continue
+				}
+
+				var logs []entities.LogEntry
+				for _, item := range logStrings {
+					var log entities.LogEntry
+					if err := json.Unmarshal([]byte(item), &log); err == nil {
+						logs = append(logs, log)
+					}
+				}
+
+				// Insert ke DB
+				if len(logs) > 0 {
+					if err := db.Create(&logs).Error; err != nil {
+						fmt.Println("DB insert error:", err)
+						continue // jangan hapus dari Redis kalau gagal insert
+					}
+
+					// Hapus batch yang sudah diproses dari Redis
+					if err := redisClient.C.LTrim("log_queue", int64(batchSize), -1).Err(); err != nil {
+						fmt.Println("Redis LTRIM error:", err)
+					}
+
 				}
 			}
 		}

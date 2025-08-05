@@ -40,3 +40,11 @@ func InitializeContentController() (controller.ContentController, error) {
 	contentController := controller.NewContentController(contentSerivce)
 	return contentController, nil
 }
+
+func InitializeLogController() (controller.LogControllerinterface, error) {
+	gormDB := db.GetDB()
+	redisClient := redis.NewRedisClient()
+	rabbitMQImpl := rabbitMQ.NewRabbitMQConnection()
+	logControllerinterface := controller.NewLogController(gormDB, redisClient, rabbitMQImpl)
+	return logControllerinterface, nil
+}

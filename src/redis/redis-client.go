@@ -23,6 +23,8 @@ type RedisConfig interface {
 	Close() error
 	PushLogToQueue(queueName string, logData interface{}) error
 	PopLogsFromQueue(queueName string, batchSize int) ([]entities.LogEntry, error)
+	LTrimQueue(queueName string, start, end int64) error
+	LRangeLogsFromQueue(queueName string, start, end int64) ([]entities.LogEntry, error)
 }
 
 func NewRedisClient() *RedisClient {
@@ -128,4 +130,26 @@ func (client *RedisClient) PopLogsFromQueue(queueName string, batchSize int) ([]
 		}
 	}
 	return logs, nil
+}
+
+func (client *RedisClient) LRangeLogsFromQueue(queueName string, start, end int64) ([]entities.LogEntry, error) {
+	var logs []entities.LogEntry
+
+	logStrings, err := client.C.LRange(queueName, start, end).Result()
+	if err != nil {
+		return logs, err
+	}
+
+	for _, item := range logStrings {
+		var log entities.LogEntry
+		if err := json.Unmarshal([]byte(item), &log); err == nil {
+			logs = append(logs, log)
+		}
+	}
+
+	return logs, nil
+}
+
+func (client *RedisClient) LTrimQueue(queueName string, start, end int64) error {
+	return client.C.LTrim(queueName, start, end).Err()
 }
